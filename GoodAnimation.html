@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+	<style> 
+		canvas {border: #666 1px solid;}
+		#insert {margin-top: 50px; border: #666 1px solid;}
+		button { width: auto;}
+		#up {margin-left: 48px}
+		#left {margin-left: 1px}
+		#right {margin-left:49px}
+		#down {margin-left: 40px}
+		#stop {margin-left: 29px; padding: 20px;}
+		#controller {width: 140px; height: auto; border: #666 1px solid; margin-left: 200px;}
+		#speed {width: 140px; height: 100px; border: #666 1px solid; margin-left: 200px; display: flex; justify-content: center; align-items: center;}
+		#faster, #slower { height: 50px;}
+	</style>
+	
+</head>
+
+<body>
+
+
+	<canvas id="screen" width="500" height="500"></canvas>
+	
+	<script>
+		var canvas = document.getElementById("screen");
+		var ctx = canvas.getContext("2d");
+		var x = 0;
+		var y = 0;
+		var rl = 1;
+		var ud = 1;
+		var loopRL;
+		var loopUD;
+		var loopStop;
+		var loopDisplay;
+		var xspeed = 5;
+		var yspeed = 5;
+		
+		document.onkeydown = checkKey;
+
+		function checkKey(e) {
+
+			if (e.keyCode === 38) {
+				console.log("up");
+				up();
+			}
+			else if (e.keyCode === 40) {
+				console.log("down");
+				down();
+			}
+			else if (e.keyCode === 37) {
+				console.log("left");
+				left();
+			}
+			else if (e.keyCode === 39) {
+				console.log("right")
+				right();
+			}
+			else {
+				stop();
+			}
+		}
+		
+	
+		function right1() {
+			ctx.clearRect (0,0,500,500);
+			ctx.fillSTyle = "rgba(0,200,0,1)";
+			ctx.fillRect (x,y,50,50);
+			x += xspeed;
+			if (x + 50 > 500) {
+				x = 450;
+				xspeed = -xspeed;
+			}
+			if (x < 0) {
+				x = 0
+				xspeed = -xspeed;
+			}
+			loopRL = setTimeout('right1()',50);
+		}
+		
+		function up1() {
+			ctx.clearRect (0,0,500,500);
+			ctx.fillSTyle = "rgba(0,200,0,1)";
+			ctx.fillRect (x,y,50,50);
+			y += yspeed;
+			if (y + 50 > 500) {
+				y = 450;
+				yspeed = -yspeed;
+			}
+			if (y < 0) {
+				y = 0;
+				yspeed = -yspeed;
+			}
+			loopUD = setTimeout('up1()',50);
+		}
+		
+		function right() {
+			clearTimeout(loopStop);
+			if (rl == 0 && xspeed < 0) {
+				xspeed = -xspeed;
+			}
+			if (rl == 1) {
+				clearTimeout(loopUD);
+				if (xspeed < 0) {
+					xspeed = -xspeed;
+				}
+				right1();
+				rl = 0;
+				ud = 1;
+			}
+		}
+		
+		function left() {
+			clearTimeout(loopStop);
+			if (rl == 0 && xspeed > 0) {
+				xspeed = -xspeed;
+			}
+			if (rl == 1) {
+				clearTimeout(loopUD);
+				if (xspeed > 0) {
+					xspeed = -xspeed;
+				}
+				right1();
+				rl = 0;
+				ud = 1;
+			}
+		}
+		
+		function down() {
+			clearTimeout(loopStop);
+			if (ud == 0 && yspeed < 0) {
+				yspeed = -yspeed;
+			}
+			if (ud == 1) {
+				clearTimeout(loopRL);
+				if (yspeed < 0) {
+					yspeed = -yspeed;
+				}
+				up1();
+				ud = 0;
+				rl = 1;
+			}
+		}
+		
+		function up() {
+			clearTimeout(loopStop);
+			if (ud == 0 && yspeed > 0) {
+				yspeed = -yspeed;
+			}
+			if (ud == 1) {
+				clearTimeout(loopRL);
+				if (yspeed > 0) {
+					yspeed = -yspeed;
+				}
+				up1();
+				ud = 0;
+				rl = 1;
+			}
+		}
+		
+		function stop() {
+			clearTimeout(loopRL);
+			clearTimeout(loopUD);
+			ctx.clearRect (0,0,500,500);
+			ctx.fillSTyle = "rgba(0,200,0,1)";
+			ctx.fillRect (x,y,50,50);
+			rl = 1;
+			ud = 1;
+		}
+		
+		window.onload = function(){
+			display()
+		}
+		
+		function display() {
+			document.getElementById("insert").innerHTML = " x equals = " + x + "<br/>"  + " y equals = " + y + "<br/>" + "speed = " + Math.abs(xspeed);
+			looopDisplay = setTimeout('display()',10);
+		}
+		
+		function faster() {
+			xspeed = xspeed * 2;
+			yspeed = yspeed * 2;
+		}
+		
+		function slower() {
+			xspeed = xspeed * 0.5;
+			yspeed = yspeed * 0.5;
+		}
+	</script>
+	
+	<div id="controller">
+		<br/>
+		<button id="up" onclick="up()">Up</button>
+		<br/>
+		<button id="left" onclick="left()">Left</button>
+		<button id="right" onclick="right()">Right</button>
+		<br/>
+		<button id="down" onclick="down()">Down</button>
+		<br/>
+		<br/>
+		<button id="stop" onclick="stop()">Stop</button>
+		<br/>
+	</div>	
+	
+	<div id="speed">
+		<button id="faster" onclick="faster()">Faster!</button>
+	    <br/>
+		<button id="slower" onclick="slower()">Slower!</button>
+	</div>
+	
+	<p id="insert">x equals = <br/> y equals = <br/> speed = </p>
+	
+</body>
+
+</html>
